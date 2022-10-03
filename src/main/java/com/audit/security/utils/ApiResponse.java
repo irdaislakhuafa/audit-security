@@ -25,4 +25,13 @@ public class ApiResponse<T> {
                         .message(value)
                         .build());
     }
+
+    public static <A> ResponseEntity<ApiResponse<A>> success(A value) {
+        return ResponseEntity.ok()
+                .body(ApiResponse.<A>builder()
+                        .status(true)
+                        .data(value)
+                        .message("success")
+                        .build());
+    }
 }
