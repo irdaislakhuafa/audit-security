@@ -1,6 +1,9 @@
 package com.audit.security.models.entity;
 
-import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -14,6 +17,7 @@ import lombok.experimental.SuperBuilder;
 public class User extends BasicEntity {
     private String name;
     private String email;
+    private LocalDateTime emailVerifiedAt;
     private String password;
 
     @ManyToOne

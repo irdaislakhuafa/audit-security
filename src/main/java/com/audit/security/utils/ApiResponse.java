@@ -28,6 +28,14 @@ public class ApiResponse<T> implements Serializable {
                         .build());
     }
 
+    public static ResponseEntity<ApiResponse<HashMap<?, ?>>> error(String error) {
+        return error(new HashMap<>() {
+            {
+                put("error", error);
+            }
+        });
+    }
+
     public static <A> ResponseEntity<ApiResponse<A>> success(A value) {
         return ResponseEntity.ok()
                 .body(ApiResponse.<A>builder()
