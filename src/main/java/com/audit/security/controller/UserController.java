@@ -25,7 +25,6 @@ public class UserController {
             return ApiResponse.error(RequestValidation.getErrors(errors));
         }
         try {
-
             var user = userServiceImpl.toEntity(request);
             var savedUser = userServiceImpl.save(user);
             if (savedUser.isEmpty()) {
@@ -36,5 +35,4 @@ public class UserController {
             return ApiResponse.error(e.getMessage());
         }
     }
-
 }

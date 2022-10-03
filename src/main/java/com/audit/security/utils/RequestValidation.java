@@ -3,7 +3,6 @@ package com.audit.security.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 
 public class RequestValidation {
