@@ -26,5 +26,5 @@ public class UserRequest {
 
     @NotBlank(message = "cannot be blank")
     @NotEmpty(message = "cannot be empty")
-    private String roles;
+    private String role;
 }

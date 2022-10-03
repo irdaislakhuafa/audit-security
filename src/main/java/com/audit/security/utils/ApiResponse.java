@@ -1,6 +1,8 @@
 package com.audit.security.utils;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
@@ -12,14 +14,14 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ApiResponse<T> {
+public class ApiResponse<T> implements Serializable {
     private Boolean status;
     private Object message;
     private T data;
 
-    public static <A> ResponseEntity<ApiResponse<A>> error(A value) {
+    public static ResponseEntity<ApiResponse<HashMap<?, ?>>> error(Map<?, ?> value) {
         return ResponseEntity.badRequest()
-                .body(ApiResponse.<A>builder()
+                .body(ApiResponse.<HashMap<?, ?>>builder()
                         .status(false)
                         .data(null)
                         .message(value)
