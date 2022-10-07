@@ -35,11 +35,11 @@ public class User extends BasicEntity implements UserDetails {
     private String password;
 
     @ManyToOne
-    private Role roles;
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(this.roles.getName().toLowerCase()));
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.getName().toLowerCase()));
     }
 
     @Override

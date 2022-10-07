@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .name(value.getName())
                 .email(value.getEmail())
                 .password(value.getPassword())
-                .roles(this.roleRepository
+                .role(this.roleRepository
                         .findByNameEqualsIgnoreCase(value.getRole())
                         .orElseGet(() -> {
                             var role = Role.builder()
