@@ -69,7 +69,6 @@ public class JwtProviderImpl implements JwtProvider {
         final var user = this.userRepository
                 .findById(claims.get("userId", Integer.class))
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
-        return (this.isExpired(tokenString)
-                || user.getRole().getName().equalsIgnoreCase(claims.get("role", String.class)));
+        return (this.isExpired(tokenString) || user.getRole().getName().equalsIgnoreCase(claims.get("role", String.class)));
     }
 }

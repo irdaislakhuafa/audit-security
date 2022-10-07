@@ -1,10 +1,9 @@
 package com.audit.security.services;
 
-import org.springframework.http.ResponseEntity;
-
 import com.audit.security.models.entity.User;
 import com.audit.security.utils.ApiResponse;
+import org.springframework.http.ResponseEntity;
 
 public interface BasicService<ENTITY> {
-    public ResponseEntity<ApiResponse<User>> save(ENTITY entity);
+	ResponseEntity<ApiResponse<User>> save(ENTITY entity);
 }
