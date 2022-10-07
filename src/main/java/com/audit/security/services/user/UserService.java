@@ -8,4 +8,5 @@ import com.audit.security.services.BasicService;
 
 public interface UserService extends BasicService<User> {
     public User toEntity(UserRequest value) throws NoSuchElementException;
+
 }

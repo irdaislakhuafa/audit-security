@@ -19,21 +19,21 @@ public class ApiResponse<T> implements Serializable {
     private Object message;
     private T data;
 
-    public static ResponseEntity<ApiResponse<HashMap<?, ?>>> error(Map<?, ?> value) {
+    public static <A> ResponseEntity<ApiResponse<A>> error(Map<?, ?> value, A type) {
         return ResponseEntity.badRequest()
-                .body(ApiResponse.<HashMap<?, ?>>builder()
+                .body(ApiResponse.<A>builder()
                         .status(false)
                         .data(null)
                         .message(value)
                         .build());
     }
 
-    public static ResponseEntity<ApiResponse<HashMap<?, ?>>> error(String error) {
+    public static <A> ResponseEntity<ApiResponse<A>> error(String error, A type) {
         return error(new HashMap<>() {
             {
                 put("error", error);
             }
-        });
+        }, type);
     }
 
     public static <A> ResponseEntity<ApiResponse<A>> success(A value) {

@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -25,9 +26,14 @@ public class BasicEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYY hh:mm:ss")
     private LocalDateTime createdAt;
+
     private String createdBy;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYY hh:mm:ss")
     private LocalDateTime updatedAt;
+
     private String updatedBy;
 
     @PrePersist

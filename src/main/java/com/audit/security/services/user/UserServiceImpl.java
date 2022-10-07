@@ -1,10 +1,9 @@
 package com.audit.security.services.user;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
-import javax.transaction.Transactional;
-
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.audit.security.models.entity.Role;
@@ -12,11 +11,13 @@ import com.audit.security.models.entity.User;
 import com.audit.security.models.repositories.RoleRepository;
 import com.audit.security.models.repositories.UserRepository;
 import com.audit.security.models.requests.UserRequest;
+import com.audit.security.utils.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -42,8 +43,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> save(User entity) {
-        return Optional.ofNullable(this.userRepository.save(entity));
+    public ResponseEntity<ApiResponse<User>> save(User entity) {
+        try {
+            entity = this.userRepository.save(entity);
+            return ApiResponse.success(entity);
+        } catch (DataIntegrityViolationException e) {
+            return ApiResponse.error("email with name \"" + entity.getEmail() + "\" already exists", entity);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage(), entity);
+        }
     }
 
 }
