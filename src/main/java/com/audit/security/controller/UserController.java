@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import com.audit.security.models.entity.User;
+import com.audit.security.models.requests.UserLoginRequest;
 import com.audit.security.models.requests.UserRequest;
 import com.audit.security.services.user.UserServiceImpl;
 import com.audit.security.utils.ApiResponse;
@@ -31,5 +32,13 @@ public class UserController {
         }
         var user = userServiceImpl.toEntity(request);
         return userServiceImpl.save(user);
+    }
+
+    @PostMapping(value = { "/login" })
+    public ResponseEntity<ApiResponse<Object>> login(@Valid @RequestBody UserLoginRequest request, Errors errors) {
+        if (errors.hasErrors()) {
+            return ApiResponse.error(RequestValidation.getErrors(errors), new Object());
+        }
+        return this.userServiceImpl.login(request);
     }
 }
