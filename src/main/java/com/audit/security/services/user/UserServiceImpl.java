@@ -1,16 +1,19 @@
 package com.audit.security.services.user;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.audit.security.models.entity.Role;
 import com.audit.security.models.entity.User;
 import com.audit.security.models.repositories.RoleRepository;
 import com.audit.security.models.repositories.UserRepository;
+import com.audit.security.models.requests.UserLoginRequest;
 import com.audit.security.models.requests.UserRequest;
 import com.audit.security.utils.ApiResponse;
 
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder encoder;
 
     @Override
     public User toEntity(UserRequest value) throws NoSuchElementException {
@@ -46,6 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<ApiResponse<User>> save(User entity) {
         try {
+            entity.setPassword(encoder.encode(entity.getPassword()));
             entity = this.userRepository.save(entity);
             return ApiResponse.success(entity);
         } catch (DataIntegrityViolationException e) {
@@ -61,6 +66,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> {
                     return new UsernameNotFoundException("username \"" + username + "\" not found");
                 });
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Map<String, String>>> login(UserLoginRequest request) {
+
+        return null;
     }
 
 }
