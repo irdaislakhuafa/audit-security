@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 import com.audit.security.models.entity.User;
 import com.audit.security.models.repositories.UserRepository;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -46,5 +45,14 @@ public class JwtProviderImpl implements JwtProvider {
                 .compact();
 
         return token;
+    }
+
+    @Override
+    public Claims getClaims(String tokenString) {
+        final var claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(tokenString)
+                .getBody();
+        return claims;
     }
 }
