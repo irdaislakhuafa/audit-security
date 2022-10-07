@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.audit.security.models.entity.User;
@@ -30,7 +31,7 @@ public class JwtProviderImpl implements JwtProvider {
         final var claims = new HashMap<String, Object>() {
             {
                 put("userId", user.getId());
-                put("role", user.getRole());
+                put("role", user.getRole().getName());
             }
         };
 
@@ -54,5 +55,21 @@ public class JwtProviderImpl implements JwtProvider {
                 .parseClaimsJws(tokenString)
                 .getBody();
         return claims;
+    }
+
+    @Override
+    public boolean isExpired(String tokenString) {
+        final var claims = this.getClaims(tokenString);
+        return claims.getExpiration().before(new Date(System.currentTimeMillis()));
+    }
+
+    @Override
+    public boolean isValid(String tokenString) throws UsernameNotFoundException {
+        final var claims = this.getClaims(tokenString);
+        final var user = this.userRepository
+                .findById(claims.get("userId", Integer.class))
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        return (this.isExpired(tokenString)
+                || user.getRole().getName().equalsIgnoreCase(claims.get("role", String.class)));
     }
 }
