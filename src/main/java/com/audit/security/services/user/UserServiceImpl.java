@@ -1,6 +1,7 @@
 package com.audit.security.services.user;
 
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,6 +16,7 @@ import com.audit.security.models.repositories.RoleRepository;
 import com.audit.security.models.repositories.UserRepository;
 import com.audit.security.models.requests.UserLoginRequest;
 import com.audit.security.models.requests.UserRequest;
+import com.audit.security.providers.JwtProviderImpl;
 import com.audit.security.utils.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
+    // private final AuthenticationManager authenticationManager;
+    private final JwtProviderImpl jwtProvider;
 
     @Override
     public User toEntity(UserRequest value) throws NoSuchElementException {
@@ -49,6 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public ResponseEntity<ApiResponse<User>> save(User entity) {
+        entity.setEmailVerifiedAt(LocalDateTime.now());
         try {
             entity.setPassword(encoder.encode(entity.getPassword()));
             entity = this.userRepository.save(entity);
@@ -69,9 +74,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Map<String, String>>> login(UserLoginRequest request) {
+    public ResponseEntity<ApiResponse<Object>> login(UserLoginRequest request) {
+        try {
+            final var user = this.userRepository.findByEmailEqualsIgnoreCase(request.getUsername());
+            if (user.isEmpty()) {
+                return ApiResponse.error("user not found", new Object());
+            }
 
-        return null;
+            if (!user.get().isEnabled()) {
+                return ApiResponse.error("please verify your account", new Object());
+            }
+
+            if (!encoder.matches(request.getPassword(), user.get().getPassword())) {
+                return ApiResponse.error("invalid password", new Object());
+            }
+
+            final var tokenString = this.jwtProvider.genTokenString(user.get());
+            return ApiResponse.success(new HashMap<>() {
+                {
+                    put("token", tokenString);
+                }
+            });
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage(), new Object());
+        }
     }
 
 }

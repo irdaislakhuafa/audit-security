@@ -1,6 +1,5 @@
 package com.audit.security.services.user;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,6 @@ import com.audit.security.utils.ApiResponse;
 public interface UserService extends BasicService<User> {
 	User toEntity(UserRequest value) throws NoSuchElementException;
 
-	ResponseEntity<ApiResponse<Map<String, String>>> login(UserLoginRequest request);
+	ResponseEntity<ApiResponse<Object>> login(UserLoginRequest request);
 
 }

@@ -47,7 +47,6 @@ public class JwtFilter extends OncePerRequestFilter {
 						user.getPassword(),
 						user.getAuthorities()) {
 					{
-						setAuthenticated(true);
 						setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					}
 				};
