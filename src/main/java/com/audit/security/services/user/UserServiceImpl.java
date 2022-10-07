@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import com.audit.security.models.entity.Role;
@@ -19,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
@@ -52,6 +53,14 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage(), entity);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.userRepository.findByEmailEqualsIgnoreCase(username)
+                .orElseThrow(() -> {
+                    return new UsernameNotFoundException("username \"" + username + "\" not found");
+                });
     }
 
 }
