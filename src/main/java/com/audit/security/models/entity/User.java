@@ -1,8 +1,14 @@
 package com.audit.security.models.entity;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.persistence.*;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class User extends BasicEntity {
+public class User extends BasicEntity implements UserDetails {
     private String name;
 
     @Column(unique = true, nullable = false)
@@ -30,4 +36,34 @@ public class User extends BasicEntity {
 
     @ManyToOne
     private Role roles;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(this.roles.getName().toLowerCase()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.isEnabled();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.isEnabled();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.isEnabled();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.emailVerifiedAt != null;
+    }
 }
